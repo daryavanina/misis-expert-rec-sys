@@ -1,0 +1,59 @@
+#distilbert-base-uncased-emotion
+#distilbert-base-uncased-finetuned-sst-2-english
+
+examples = [
+    # Sadness
+    ("I feel so lonely and hopeless today.", "sadness"),
+    ("Tears rolled down my cheeks as I remembered the past.", "sadness"),
+
+    # Joy
+    ("I can't stop smiling, everything is wonderful!", "joy"),
+    ("Winning the competition made me incredibly happy.", "joy"),
+
+    # Love
+    ("I cherish every moment we spend together.", "love"),
+    ("My heart beats faster whenever I see you.", "love"),
+
+    # Anger
+    ("I'm furious about how unfairly I was treated.", "anger"),
+    ("He slammed the door in anger.", "anger"),
+
+    # Fear
+    ("Walking alone at night makes me anxious.", "fear"),
+    ("I was terrified when I heard the strange noise.", "fear"),
+
+    # Surprise
+    ("I couldn't believe my eyes when I saw the results!", "surprise"),
+    ("She gasped in astonishment at the unexpected gift.", "surprise"),
+]
+
+{
+    "scored_labels": [
+        {
+            "label": "surprise",
+            "score": 0.9420580863952637
+        },
+        {
+            "label": "fear",
+            "score": 0.04794665798544884
+        },
+        {
+            "label": "joy",
+            "score": 0.005160637199878693
+        },
+        {
+            "label": "anger",
+            "score": 0.0019083855440840125
+        },
+        {
+            "label": "sadness",
+            "score": 0.0014890688471496105
+        },
+        {
+            "label": "love",
+            "score": 0.0014372020959854126
+        }
+    ]
+}
+
+{'Happy': 0.33, 'Angry': 0.0, 'Surprise': 0.67, 'Sad': 0.0, 'Fear': 0.0}
