@@ -1,7 +1,7 @@
 import json
 import os
 
-def get_api_results(config_path="close/config.json") -> dict:
+def get_config(config_path="config.json") -> dict:
     """
     Загружает API ключи и URL из config.json.
 
