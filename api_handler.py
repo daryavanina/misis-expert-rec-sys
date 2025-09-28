@@ -2,7 +2,6 @@ import requests
 import nlpcloud
 
 from data_handler import get_api_results
-#from comparer import format_model_1_results, format_model_2_results
 
 config = get_api_results()
 
@@ -45,10 +44,3 @@ def analyze_second(text: str) -> dict:
         print(f"Ошибка HTTP: {e}")
         return {}
     
-# config = {
-#     "second_api_key": "WAzBy0DCGelQZtTrbGMywRcPOfMUabD3",
-#     "second_url": "https://api.apilayer.com/text_to_emotion"
-# }
-
-# result = analyze_nlp("She gasped in astonishment at the unexpected gift.")
-# print(result)
