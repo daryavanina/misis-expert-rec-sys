@@ -50,17 +50,17 @@ class MainWindow(QWidget):
 
         if not text:
             self.result_output.setText("Введите текст!")
-            return
         
-        try:
-            self.nlp_result = analyze_nlp(text)
-            if self.nlp_result:
-                self.result_output.clear()
-                self.result_output.append(f"NLP Cloud:\n{format_nlp_model_results(self.nlp_result)}")
-                
-        
-        except Exception as e:
-            self.result_text.append(f"Ошибка: {e}")
+        else:
+            try:
+                self.nlp_result = analyze_nlp(text)
+                if self.nlp_result:
+                    self.result_output.clear()
+                    self.result_output.append(f"NLP Cloud:\n{format_nlp_model_results(self.nlp_result)}")
+                    
+            
+            except Exception as e:
+                self.result_text.append(f"Ошибка: {e}")
 
     def analyze_text_to_emotion(self) -> None:
         """
@@ -70,16 +70,16 @@ class MainWindow(QWidget):
 
         if not text:
             self.result_output.setText("Введите текст!")
-            return
         
-        try:
-            self.tte_result = analyze_tte(text)
-            if self.tte_result:
-                self.result_output.clear()
-                self.result_output.append(f"TextToEmotion:\n{format_tte_model_results(self.tte_result)}")
+        else:
+            try:
+                self.tte_result = analyze_tte(text)
+                if self.tte_result:
+                    self.result_output.clear()
+                    self.result_output.append(f"TextToEmotion:\n{format_tte_model_results(self.tte_result)}")
         
-        except Exception as e:
-            self.result_output.append(f"Ошибка: {e}")
+            except Exception as e:
+                self.result_output.append(f"Ошибка: {e}")
 
     def compare_results(self) -> None:
         """

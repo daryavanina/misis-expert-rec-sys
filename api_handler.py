@@ -9,8 +9,6 @@ def analyze_nlp(text: str) -> dict:
     """
     Делает POST-запрос к API NLP Cloud.
 
-    :param url: URL API
-    :param api_key: API ключ
     :param text: текст для анализа
     :return: словарь с результатом анализа эмоций
     """
@@ -20,14 +18,11 @@ def analyze_nlp(text: str) -> dict:
         return result
     except Exception as e:
         print(f"Ошибка при анализе текста: {e}")
-        return {}
     
 def analyze_tte(text: str) -> dict:
     """
     Делает POST-запрос к API text to emotions.
 
-    :param url: URL API
-    :param api_key: API ключ
     :param text: текст для анализа
     :return: словарь с результатом анализа эмоций
     """
@@ -42,7 +37,6 @@ def analyze_tte(text: str) -> dict:
         return response.json()
     except requests.exceptions.HTTPError as e:
         print(f"Ошибка HTTP: {e}")
-        return {}
     
 def format_comparison_results(comparison_data: dict) -> str:
     """
@@ -79,6 +73,12 @@ def format_comparison_results(comparison_data: dict) -> str:
     return output
 
 def format_nlp_model_results(nlp_model_results: dict) -> str:
+    """
+    Форматирует результаты NLP Cloud
+
+    :param nlp_model_results: словарь с результатами работы NLP Cloud
+    :return: строка для вывода
+    """
     lines = []
     for item in nlp_model_results["scored_labels"]:
         lines.append(f"- {item['label']}: {item['score']:.4f}")
@@ -86,8 +86,13 @@ def format_nlp_model_results(nlp_model_results: dict) -> str:
 
 
 def format_tte_model_results(tte_model_results: dict) -> str:
+    """
+    Форматирует результаты Text To Emotions
+
+    :param tte_model_results: словарь с результатами работы Text To Emotions
+    :return: строка для вывода
+    """
     lines = []
     for label, score in tte_model_results.items():
         lines.append(f"- {label}: {score:.4f}")
-    return "\n".join(lines)
-    
+    return "\n".join(lines)    
