@@ -5,7 +5,6 @@ from PyQt6.QtWidgets import (
 )
 from api_handler import analyze_nlp, analyze_tte, format_comparison_results, format_nlp_model_results, format_tte_model_results
 from comparer import compare_emotions_results
-import random
 
 class MainWindow(QWidget):
     def __init__(self):
