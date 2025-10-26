@@ -1,6 +1,19 @@
 import aiohttp
 from config import get_config
-from static import texts
+import json
+from pathlib import Path
+
+MAX_ANSWER_TIMEOUT_SECONDS = 60
+"""
+Максимальное время ожидания ответа от LLM API в секундах.
+"""
+
+def load_texts():
+    static_path = Path(__file__).parent / "static" / "texts.json"
+    with open(static_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+texts = load_texts()
 
 config = get_config()
 
@@ -26,7 +39,7 @@ async def query_llm_api(url: str, host: str, payload: dict) -> dict:
                 url,
                 json=payload,
                 headers=headers,
-                timeout=aiohttp.ClientTimeout(total=60)
+                timeout=aiohttp.ClientTimeout(total=MAX_ANSWER_TIMEOUT_SECONDS)
             ) as response:
                 response.raise_for_status()
                 return await response.json()
@@ -35,7 +48,7 @@ async def query_llm_api(url: str, host: str, payload: dict) -> dict:
         return None
 
 
-async def get_gpt4o_response(user_query: str, context: str = "") -> str:
+async def get_gpt4o_response(user_query: str, params: dict) -> str:
     """
     Выполняет анализ эмоций текста с помощью модели GPT-4o (через RapidAPI).
 
@@ -43,20 +56,31 @@ async def get_gpt4o_response(user_query: str, context: str = "") -> str:
     :param context: Необязательный контекст, добавляемый к системному сообщению.
     :return: Текстовое описание эмоционального состояния, сгенерированное моделью.
     """
+    base_params = config["model_params"]
+
+    temperature = params.get("temperature", base_params["temperature"])
+    max_tokens = params.get("max_tokens", base_params["max_tokens"])
+    
+    lang_instruction = (
+        "Отвечай на русском языке."
+        if params.get("language") == "русский"
+        else "Answer in English."
+    )
+    
     system_prompt = (
-        f"{context} {texts.SYSTEM_PROMPT}"
+        f"{texts["SYSTEM_PROMPT"]} {lang_instruction}"
     )
 
     payload = {
         "messages": [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": f"Проанализируй это сообщение: {user_query}"}
+            {"role": "user", "content": f"Проанализируй эмоции в тексте: {user_query}"}
         ],
-        "temperature": 0.7,           # Контролирует креативность (0 — точнее, 1 — креативнее)
-        "max_tokens": 300,            # Максимальное количество токенов в ответе
-        "top_p": 0.9,                 # Нуклеус-семплинг (оставляет верхние p вероятностей)
-        "presence_penalty": 0.6,      # Наказывает за повторения
-        "frequency_penalty": 0.4,    # Наказывает за частое использование одних и тех же фраз
+        "temperature": temperature,                             # Контролирует креативность (0 — точнее, 1 — креативнее)
+        "max_tokens": max_tokens,                               # Максимальное количество токенов в ответе    
+        "top_p": base_params["top_p"],                          # Используется нуклеус-семплинг 
+        "presence_penalty": base_params["presence_penalty"],    # Наказывает за повторения
+        "frequency_penalty": base_params["frequency_penalty"],  # Наказывает за частое использование одних и тех же фраз
         "web_access": False
     }
 
@@ -66,15 +90,17 @@ async def get_gpt4o_response(user_query: str, context: str = "") -> str:
         payload
     )
 
-    if response and "result" in response:
-        return response["result"]
-    elif response and "response" in response:
-        return response["response"]
-    else:
-        return texts.ERROR_MESSAGE.format(error="GPT-4o не смог проанализировать эмоции.")
+    if response:
+            if "result" in response:
+                return response["result"]
+            elif "response" in response:
+                return response["response"]
+            elif isinstance(response, dict):
+                return str(response)
+    return texts["ERROR_MESSAGE"].format(error="GPT-4o не смог проанализировать эмоции.")
 
 
-async def get_llama_response(user_query: str, context: str = "") -> str:
+async def get_llama_response(user_query: str, params: dict) -> str:
     """
     Выполняет анализ эмоций текста с помощью модели LLaMA 2 (через RapidAPI).
 
@@ -82,23 +108,32 @@ async def get_llama_response(user_query: str, context: str = "") -> str:
     :param context: Необязательный контекст, добавляемый к системному сообщению.
     :return: Текстовое описание эмоций, выведенное моделью LLaMA.
     """
+    base_params = config["model_params"]
+
+    temperature = params.get("temperature", base_params["temperature"])
+    max_tokens = params.get("max_tokens", base_params["max_tokens"])
+    
+    lang_instruction = (
+        "Отвечай на русском языке."
+        if params.get("language") == "русский"
+        else "Answer in English."
+    )
+     
     system_prompt = (
-        f"{context} {texts.SYSTEM_PROMPT}"
+        f"{texts["SYSTEM_PROMPT"]} {lang_instruction}"
     )
 
     payload = {
         "messages": [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": f"Проанализируй это сообщение: {user_query}"}
+            {"role": "user", "content": f"Проанализируй эмоции в тексте: {user_query}"}
         ],
-        "parameters": {
-            "temperature": 0.65,          # Умеренно креативный стиль
-            "top_p": 0.9,                 # Используется нуклеус-семплинг
-            "max_new_tokens": 300,        # Ограничение длины ответа
-            "repetition_penalty": 1.1,    # Штраф за повторения фраз
-            "do_sample": True             # Включает вероятностную выборку
+        "temperature": temperature,                              # Контролирует креативность    (0 — точнее, 1 — креативнее)
+        "max_new_tokens": max_tokens,                            # Ограничение длины ответа
+        "top_p": base_params["top_p"],                           # Используется нуклеус-семплинг
+        "repetition_penalty": base_params["repetition_penalty"], # Штраф за повторения фраз
+        "do_sample": 1
         }
-    }
 
     response = await query_llm_api(
         config["llama_url"],
@@ -106,7 +141,11 @@ async def get_llama_response(user_query: str, context: str = "") -> str:
         payload
     )
 
-    if response and "result" in response:
-        return response["result"]
-    else:
-        return texts.ERROR_MESSAGE.format(error="LLaMA не смог проанализировать эмоции.")
+    if response:
+        if "result" in response:
+            return response["result"]
+        elif "response" in response:
+            return response["response"]
+        elif isinstance(response, dict):
+            return str(response)
+    return texts["ERROR_MESSAGE"].format(error="LLaMA не смогла проанализировать эмоции.")

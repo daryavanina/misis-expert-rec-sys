@@ -14,5 +14,13 @@ def get_config() -> dict:
         "gpt4o_host": os.getenv("GPT4O_HOST"),
         "gpt4o_url": os.getenv("GPT4O_URL"),
         "llama_host": os.getenv("LLAMA_HOST"),
-        "llama_url": os.getenv("LLAMA_URL")
+        "llama_url": os.getenv("LLAMA_URL"),
+        "model_params": {
+            "temperature": 0.7,
+            "max_tokens": 300,
+            "top_p": 0.9,
+            "repetition_penalty": 1.1,
+            "presence_penalty": 0.6,
+            "frequency_penalty": 0.4
+        }
     }
