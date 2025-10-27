@@ -17,7 +17,7 @@ def get_config() -> dict:
         "llama_url": os.getenv("LLAMA_URL"),
         "model_params": {
             "temperature": 0.7,
-            "max_tokens": 300,
+            "max_tokens": 100,
             "top_p": 0.9,
             "repetition_penalty": 1.1,
             "presence_penalty": 0.6,

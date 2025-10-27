@@ -27,7 +27,7 @@ user_state = {}
 DEFAULT_PARAMS = {
     "model": None,
     "temperature": 0.7,
-    "max_tokens": 50,
+    "max_tokens": 100,
     "response_language": "русский"
 }
 
