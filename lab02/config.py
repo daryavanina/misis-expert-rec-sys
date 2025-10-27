@@ -6,7 +6,7 @@ load_dotenv()
 def get_config() -> dict:
     """
     Возвращает конфигурацию тг-бота и RapidAPI
-    :return: Словарь с токенами и URL.
+    :return: Словарь с токенами, URL и параметрами.
     """
     return {
         "tg_token": os.getenv("TELEGRAM_TOKEN"),

@@ -1,10 +1,8 @@
 import asyncio
 import json
 from aiogram import Bot, Dispatcher, types
-from aiogram.types import Message
 from aiogram.filters import Command, CommandStart
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from aiogram.fsm.context import FSMContext
 from pathlib import Path
 from llm_handler import get_gpt4o_response, get_llama_response, MAX_ANSWER_TIMEOUT_SECONDS
 from config import get_config
@@ -159,7 +157,6 @@ async def analyze_message(message: types.Message):
             )
 
         await wait_msg.edit_text(f"Анализ ({params['model'].upper()}):\n\n{response}")
-
 
     except asyncio.TimeoutError:
         await wait_msg.edit_text(texts["TIMEOUT_MESSAGE"])
