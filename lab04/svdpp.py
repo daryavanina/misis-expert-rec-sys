@@ -5,12 +5,12 @@ from pathlib import Path
 
 class SVDpp:
     """
-    Реализация SVD++ для рекомендательной системы.
+    Реализация SVD++ (Singular Value Decomposition with implicit feedback) для рекомендательной системы.
     """
 
     def __init__(self, dp, factors: int, lr: float, reg: float, epochs: int, cache_path: Optional[str]):
         """
-        Инициализация модели SVD++
+        Инициализация модели
 
         :param dp: объект DataProcessor для доступа к данным
         :param factors: размерность скрытого латентного пространства
@@ -78,7 +78,8 @@ class SVDpp:
 
     def train(self) -> None:
         """
-        Обучение модели SVD++."""
+        Обучение модели SVD++.
+        """
         print("[SVD++] Старт обучения SVD++")
         self._build_mappings()
         self._init_params()
@@ -134,7 +135,7 @@ class SVDpp:
         Предсказывает рейтинг для одного пользователя.
         :param user_ratings: словарь {movie_id: rating} для виртуального пользователя
         :param item_id: ID объекта для предсказания рейтингaа
-        :return: предсказанный рейтинг или None, если объект неизвестен
+        :return: предсказанный рейтинг
         """
         if item_id not in self.item_index_map:
             return None
